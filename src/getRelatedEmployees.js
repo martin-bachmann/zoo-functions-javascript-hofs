@@ -8,7 +8,6 @@ function isManager(id) {
 function getRelatedEmployees(managerId) {
   // seu código aqui
   if (isManager(managerId)) {
-    console.log('É manager');
     return data.employees.reduce((acc, employee) => {
       let returnVar = acc;
       if (employee.managers.includes(managerId)) {
