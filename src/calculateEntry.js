@@ -15,17 +15,17 @@ function countEntrants(entrants) {
     entrantsObj.adult += 1;
   });
   return entrantsObj;
-}
+} // Aqui eu criei um objeto para contar, e depois um forEach que percorre o array Entrants e identifica qual a idade do visitante e adiciona no objeto contador
 
 function calculateEntry(entrants) {
   // seu código aqui
-  if (!entrants) {
+  if (!entrants) { // Confere se a função foi chamada sem parâmetro
     return 0;
   }
-  if (Object.keys(entrants).length === 0) {
+  if (Object.keys(entrants).length === 0) { // Confere se a função foi chamada com um objeto vazio
     return 0;
   }
-  const { child, adult, senior } = countEntrants(entrants);
+  const { child, adult, senior } = countEntrants(entrants); // Desestrutura o objeto para deixar o código do calculo mais limpo
   return (child * data.prices.child) + (adult * data.prices.adult) + (senior * data.prices.senior);
 }
 

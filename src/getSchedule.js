@@ -1,24 +1,5 @@
 const data = require('../data/zoo_data');
 
-function getFullSchedule() { // Para essa função, usei a função de um dia com um reduce para iterar sobre todos os dias da semana
-  return Object.keys(data.hours).reduce((accObj, day) => {
-    const scheduleObj = accObj;
-    scheduleObj[day] = { officeHour: '', exhibition: '' };
-    if (day === 'Monday') {
-      scheduleObj[day].officeHour = 'CLOSED';
-      scheduleObj[day].exhibition = 'The zoo will be closed!';
-      return scheduleObj;
-    }
-    const dayObj = data.hours[day];
-    scheduleObj[day].officeHour = `Open from ${dayObj.open}am until ${dayObj.close}pm`;
-    scheduleObj[day].exhibition = data.species.reduce((acc, animal) => {
-      if (animal.availability.includes(day)) { acc.push(animal.name); }
-      return acc;
-    }, []);
-    return scheduleObj;
-  }, {});
-}
-
 function getDaySchedule(scheduleTarget) {
   const scheduleObj = { [scheduleTarget]: { // Aqui cria o objeto que será retornado posteriormente
     officeHour: '',
@@ -38,20 +19,30 @@ function getDaySchedule(scheduleTarget) {
   return scheduleObj;
 }
 
-function getAnimalSchedule(scheduleTarget) {
+function getAnimalSchedule(scheduleTarget) { // Retorna os horários do animal
   return data.species.find((animal) => animal.name === scheduleTarget).availability;
+}
+
+function getFullSchedule() { // Para essa função, usei a função de um dia como base com um reduce para iterar sobre todos os dias da semana
+  return Object.keys(data.hours).reduce((accObj, day) => {
+    const newDay = getDaySchedule(day);
+    const scheduleObj = { ...accObj, ...newDay }; // Usei o spread operator para adicionar as novas propriedades no objeto retornado
+    return scheduleObj;
+  }, {});
 }
 
 function getSchedule(scheduleTarget) { // Como indicado no README, criei funções específicas para cada caso. Aqui só identifica qual função deve ser executada
   // seu código aqui
-  if (!scheduleTarget) { return getFullSchedule(); }
-  if (data.species.find((animal) => animal.name === scheduleTarget)) {
+  if (!scheduleTarget) { return getFullSchedule(); } // Confere se a função foi chamada sem parâmetro
+  if (data.species.find((animal) => animal.name === scheduleTarget)) { // Identifica se o parâmetro é um animal
     return getAnimalSchedule(scheduleTarget);
   }
-  if (Object.keys(data.hours).find((days) => days === scheduleTarget)) {
+  if (Object.keys(data.hours).find((days) => days === scheduleTarget)) { // Identifica se o parâmetro é um dia
     return getDaySchedule(scheduleTarget);
   }
-  return getFullSchedule();
+  return getFullSchedule(); // Chama a função para retornar tudo se não identificou um dia ou animal
 }
+
+getSchedule('a');
 
 module.exports = getSchedule;
